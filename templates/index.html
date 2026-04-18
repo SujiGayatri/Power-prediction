@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Power Estimation System</title>
+    <meta charset="UTF-8">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            color: #111827;
+        }
+
+        /* Glass */
+        .glass {
+            background: rgba(255, 255, 255, 0.10);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        /* Neon glow */
+        .glow {
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.35);
+        }
+
+        /* Gradient text */
+        .grad-text {
+            background: linear-gradient(90deg, #6366f1, #22d3ee, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Floating animation */
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* INPUT FIELD ADVANCED */
+        .input-neo {
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .input-neo:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.4),
+                inset 0 0 12px rgba(99, 102, 241, 0.4);
+        }
+
+        /* BUTTON ADVANCED */
+        /* BUTTON – thick white glass sweep */
+        .btn-neo {
+            position: relative;
+            border-radius: 9999px;
+            padding: 5px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-neo::before {
+            content: "";
+            position: absolute;
+            inset: -8px;
+            background: linear-gradient(120deg,
+                    rgba(255, 255, 255, 0.95),
+                    rgba(255, 255, 255, 0.35),
+                    rgba(255, 255, 255, 0.95));
+            filter: blur(3px);
+            animation: sweep 3.2s linear infinite;
+        }
+
+        @keyframes sweep {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn-neo span {
+            position: relative;
+            z-index: 1;
+            display: block;
+            padding: 1.5rem 5rem;
+            background: rgba(2, 6, 23, 0.9);
+            backdrop-filter: blur(12px);
+            border-radius: 9999px;
+            color: white;
+            font-weight: 700;
+            transition: all 0.35s ease;
+        }
+
+        .btn-neo:hover span {
+            background: rgba(2, 6, 23, 0.75);
+            box-shadow:
+                inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+                0 0 45px rgba(255, 255, 255, 0.35);
+        }
+
+        .btn-neo:hover {
+            transform: translateY(-6px) scale(1.06);
+        }
+
+        .btn-neo:active {
+            transform: scale(0.96);
+        }
+
+        /* Metric cards */
+        .metric-card {
+            transition: all 0.4s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-12px) scale(1.05);
+            box-shadow: 0 0 50px rgba(236, 72, 153, 0.35);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-[#0f172a] via-[#020617] to-[#0f172a] min-h-screen">
+
+    <nav class="flex justify-between items-center px-10 py-6">
+
+    <h1 class="text-2xl font-bold grad-text">⚡ PowerAI</h1>
+
+    <div class="space-x-6 text-white">
+
+        <a href="/home" class="hover:text-cyan-400">Home</a>
+
+        <a href="/dashboard" class="hover:text-cyan-400">Dashboard</a>
+
+        <a href="/about" class="hover:text-cyan-400">About Us</a>
+
+        <a href="/contact" class="hover:text-cyan-400">Contact Us</a>
+
+        <a href="/logout" class="text-red-400 hover:text-red-600">Logout</a>
+
+    </div>
+
+</nav>
+
+    <div class="max-w-7xl mx-auto px-6 py-16">
+
+        <!-- HEADER -->
+        <div class="text-center mb-20 float">
+            <h1 class="text-7xl font-bold grad-text mb-6">⚡ Power Estimation System</h1>
+            <p class="text-gray-400 text-lg max-w-3xl mx-auto">
+                AI-driven energy forecasting using deep learning & real-time grid intelligence
+            </p>
+        </div>
+
+        <!-- INPUT PANEL -->
+        <div class="glass rounded-[2.5rem] p-14 mb-20 glow">
+            <h2 class="text-4xl font-bold text-white mb-14 text-center">🔮 Simulation Parameters</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+
+                <div>
+                    <label class="block mb-3 text-gray-300 font-semibold">🌡️ Temperature</label>
+                    <input id="temperature" type="number" value="35" class="input-neo w-full p-5 rounded-xl text-xl">
+                </div>
+
+                <div>
+                    <label class="block mb-3 text-gray-300 font-semibold">💧 Humidity</label>
+                    <input id="humidity" type="number" value="60" class="input-neo w-full p-5 rounded-xl text-xl">
+                </div>
+
+                <div>
+                    <label class="block mb-3 text-gray-300 font-semibold">🌧️ Rainfall</label>
+                    <input id="rain" type="number" value="2.5" class="input-neo w-full p-5 rounded-xl text-xl">
+                </div>
+
+                <div>
+                    <label class="block mb-3 text-gray-300 font-semibold">⚡ Current Load</label>
+                    <input id="current_load" type="number" value="145" class="input-neo w-full p-5 rounded-xl text-xl">
+                </div>
+
+                <div>
+                    <label class="block mb-3 text-gray-300 font-semibold">⏰ Hour</label>
+                    <select id="hour" class="input-neo w-full p-5 rounded-xl text-xl">
+                        <option value="6">06:00 AM</option>
+                        <option value="12">12:00 PM</option>
+                        <option value="18" selected>06:00 PM</option>
+                        <option value="22">10:00 PM</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block mb-3 text-gray-300 font-semibold">📅 Day</label>
+                    <input id="day" type="number" value="20" class="input-neo w-full p-5 rounded-xl text-xl">
+                </div>
+
+                <div>
+                    <label class="block mb-3 text-gray-300 font-semibold">📆 Month</label>
+                    <select id="month" class="input-neo w-full p-5 rounded-xl text-xl">
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6" selected>June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </div>
+
+
+                <div>
+                    <label class="block mb-3 text-gray-300 font-semibold">📆 Weekday</label>
+                    <select id="weekday" class="input-neo w-full p-5 rounded-xl text-xl">
+                        <option value="0">Monday</option>
+                        <option value="1">Tuesday</option>
+                        <option value="2">Wednesday</option>
+                        <option value="3">Thursday</option>
+                        <option value="4" selected>Friday</option>
+                        <option value="5">Saturday</option>
+                        <option value="6">Sunday</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- BUTTON -->
+            <div class="text-center mt-20">
+                <button onclick="runPrediction()" class="btn-neo rounded-full">
+                    <span class="text-xl font-bold text-white">
+                        🚀 Execute Prediction
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <!-- OUTPUT -->
+        <div id="output_section" class="grid md:grid-cols-2 gap-12 mb-20">
+
+            <div class="glass p-12 rounded-[2rem] glow text-center">
+                <h3 class="text-3xl font-bold text-white mb-8">🎯 Prediction Output</h3>
+                <div id="forecast_val" class="text-6xl font-bold grad-text mb-6">-- kWh</div>
+                <div id="alert_box" class="py-4 rounded-xl bg-white/20 text-white mb-6">
+                    Waiting for input...
+                </div>
+                <div class="text-gray-300 space-y-2">
+                    <div>CO₂: <span id="co2_val">--</span> kg</div>
+                    <div>Cost: ₹<span id="cost_val">--</span></div>
+                    <div>Confidence: <span id="conf_val">--</span>%</div>
+                </div>
+            </div>
+
+            <div class="glass p-10 rounded-[2rem]">
+                <h3 class="text-2xl font-bold text-white mb-4">📡 System Logs</h3>
+                <pre id="debug_box" class="bg-black/70 text-green-400 p-4 rounded-xl h-72 overflow-auto text-xs">
+Waiting for execution...
+            </pre>
+            </div>
+        </div>
+        <!-- ═══════════════════════════════════════════
+             24-HOUR FORECAST CHART SECTION
+        ════════════════════════════════════════════ -->
+        <div id="forecast_chart_section" class="glass rounded-[2.5rem] p-10 mb-20 glow" style="display:none;">
+
+            <h3 class="text-3xl font-bold text-white mb-2 text-center">📈 24-Hour Load Forecast</h3>
+            <p class="text-center text-gray-400 mb-8 text-sm">
+                Autoregressive CNN-BiLSTM prediction — each hour feeds into the next
+            </p>
+
+            <!-- Summary stat cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+
+                <div class="glass rounded-2xl p-5 text-center">
+                    <div class="text-gray-400 text-xs uppercase tracking-widest mb-1">Peak Load</div>
+                    <div id="fc_peak" class="text-2xl font-bold grad-text">-- kWh</div>
+                    <div id="fc_peak_hour" class="text-gray-500 text-xs mt-1">at --:00</div>
+                </div>
+
+                <div class="glass rounded-2xl p-5 text-center">
+                    <div class="text-gray-400 text-xs uppercase tracking-widest mb-1">Avg Load</div>
+                    <div id="fc_avg" class="text-2xl font-bold grad-text">-- kWh</div>
+                    <div class="text-gray-500 text-xs mt-1">per hour</div>
+                </div>
+
+                <div class="glass rounded-2xl p-5 text-center">
+                    <div class="text-gray-400 text-xs uppercase tracking-widest mb-1">Total Energy</div>
+                    <div id="fc_total" class="text-2xl font-bold grad-text">-- kWh</div>
+                    <div class="text-gray-500 text-xs mt-1">over 24 hours</div>
+                </div>
+
+                <div class="glass rounded-2xl p-5 text-center">
+                    <div class="text-gray-400 text-xs uppercase tracking-widest mb-1">Est. CO₂</div>
+                    <div id="fc_co2" class="text-2xl font-bold grad-text">-- kg</div>
+                    <div class="text-gray-500 text-xs mt-1">0.8 kg/kWh (India grid)</div>
+                </div>
+
+            </div>
+
+            <!-- The actual chart -->
+            <div style="position:relative; height:350px;">
+                <canvas id="forecastChart"></canvas>
+            </div>
+
+            <p class="text-center text-gray-600 text-xs mt-4">
+                Shaded region = ±5% confidence band &nbsp;|&nbsp;
+            </p>
+
+        </div>
+        <!-- END 24-HOUR FORECAST CHART SECTION -->
+         
+        <!-- ACCURACY METRICS HEADING -->
+        <h3 class="text-center text-2xl font-bold text-white mb-10 tracking-widest uppercase">
+            Accuracy Metrics
+        </h3>
+
+
+        <!-- METRICS -->
+        <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-10xl mx-auto">
+            <div class="glass metric-card p-10 rounded-[2rem] text-center">
+                <div class="text-5xl font-bold grad-text">3.9</div>
+                <div class="text-gray-400 mt-2">RMSE</div>
+            </div>
+            <div class="glass metric-card p-10 rounded-[2rem] text-center">
+                <div class="text-5xl font-bold grad-text">2.9</div>
+                <div class="text-gray-400 mt-2">MAE</div>
+            </div> -->
+        <!-- <div class="glass metric-card p-10 rounded-[2rem] text-center">
+                <div class="text-5xl font-bold grad-text">97%</div>
+                <div class="text-gray-400 mt-2">Accuracy</div>
+            </div> -->
+        <!-- </div> -->
+
+
+        <!-- METRICS -->
+        <div class="flex justify-center">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-4xl">
+
+                <div class="glass metric-card p-10 rounded-[2rem] text-center">
+                    <div class="text-5xl font-bold grad-text">3.9</div>
+                    <div class="text-gray-400 mt-2">RMSE</div>
+                </div>
+
+                <div class="glass metric-card p-10 rounded-[2rem] text-center">
+                    <div class="text-5xl font-bold grad-text">2.9</div>
+                    <div class="text-gray-400 mt-2">MAE</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- <p class="text-center text-gray-500 mt-14 text-sm">
+            CNN-BiLSTM • Smart Grid Energy Intelligence Platform
+        </p> -->
+    </div>
+
+    <!-- JS LOGIC UNCHANGED -->
+    <script>
+        // ── Chart.js instance (kept in outer scope so we can destroy/recreate) ──
+        let forecastChartInstance = null;
+
+        async function runPrediction() {
+
+            const temperatureEl  = document.getElementById("temperature");
+            const humidityEl     = document.getElementById("humidity");
+            const rainEl         = document.getElementById("rain");
+            const currentLoadEl  = document.getElementById("current_load");
+            const hourEl         = document.getElementById("hour");
+            const dayEl          = document.getElementById("day");
+            const monthEl        = document.getElementById("month");
+            const weekdayEl      = document.getElementById("weekday");
+
+            const forecastEl = document.getElementById("forecast_val");
+            const co2El      = document.getElementById("co2_val");
+            const costEl     = document.getElementById("cost_val");
+            const confEl     = document.getElementById("conf_val");
+            const alertBox   = document.getElementById("alert_box");
+            const debugBox   = document.getElementById("debug_box");
+
+            const payload = {
+                temperature : parseFloat(temperatureEl.value),
+                humidity    : parseFloat(humidityEl.value),
+                rain        : parseFloat(rainEl.value),
+                current_load: parseFloat(currentLoadEl.value),
+                hour        : parseInt(hourEl.value),
+                day         : parseInt(dayEl.value),
+                month       : parseInt(monthEl.value),
+                weekday     : parseInt(weekdayEl.value)
+            };
+
+            alertBox.textContent = "⏳ Processing...";
+            alertBox.className   = "py-4 rounded-xl bg-yellow-400 text-black mb-6 font-bold";
+
+            try {
+                // ── 1. Original single-step prediction (unchanged) ──────────────
+                const res  = await fetch("/api/predict", {
+                    method : "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body   : JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                document.getElementById("output_section").scrollIntoView({ behavior: "smooth" });
+
+                debugBox.textContent =
+                    "REQUEST:\n" + JSON.stringify(payload, null, 2) +
+                    "\n\nRESPONSE:\n" + JSON.stringify(data, null, 2);
+
+                if (!data.success) {
+                    alertBox.textContent = "❌ Error: " + (data.error || "Prediction failed");
+                    alertBox.className   = "py-4 rounded-xl bg-red-500 text-white mb-6 font-bold";
+                    return;
+                }
+
+                forecastEl.textContent = data.forecast_kwh.toFixed(1) + " kWh";
+                co2El.textContent      = data.co2_kg.toFixed(1);
+                costEl.textContent     = data.cost_inr.toFixed(0);
+                confEl.textContent     = data.confidence.toFixed(1);
+
+                alertBox.textContent = data.alert;
+                let cls = "py-4 rounded-xl mb-6 font-bold ";
+                if      (data.alert.includes("HIGH"))   cls += "bg-red-500 text-white";
+                else if (data.alert.includes("MEDIUM")) cls += "bg-yellow-400 text-black";
+                else                                    cls += "bg-emerald-500 text-white";
+                alertBox.className = cls;
+
+                // ── 2. 24-hour forecast (NEW) ────────────────────────────────────
+                const res24  = await fetch("/api/forecast24", {
+                    method : "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body   : JSON.stringify(payload)
+                });
+                const data24 = await res24.json();
+
+                if (data24.success) {
+                    // Update summary stat cards
+                    document.getElementById("fc_peak").textContent      = data24.peak_kwh.toFixed(1) + " kWh";
+                    document.getElementById("fc_peak_hour").textContent = "at " + data24.peak_hour;
+                    document.getElementById("fc_avg").textContent       = data24.avg_kwh.toFixed(1) + " kWh";
+                    document.getElementById("fc_total").textContent     = data24.total_kwh.toFixed(1) + " kWh";
+                    document.getElementById("fc_co2").textContent       = data24.total_co2.toFixed(1) + " kg";
+
+                    // Show the chart section (hidden by default)
+                    const chartSection = document.getElementById("forecast_chart_section");
+                    chartSection.style.display = "block";
+
+                    // Scroll to the chart
+                    setTimeout(() => chartSection.scrollIntoView({ behavior: "smooth" }), 300);
+
+                    // Destroy previous chart if it exists (prevents Chart.js canvas reuse error)
+                    if (forecastChartInstance) {
+                        forecastChartInstance.destroy();
+                    }
+
+                    // Build the Chart.js chart
+                    const ctx = document.getElementById("forecastChart").getContext("2d");
+                    forecastChartInstance = new Chart(ctx, {
+                        type: "line",
+                        data: {
+                            labels  : data24.labels,
+                            datasets: [
+                                // ── Upper confidence band (invisible line, fills down to lower) ──
+                                {
+                                    label          : "Upper Band",
+                                    data           : data24.upper,
+                                    borderColor    : "transparent",
+                                    backgroundColor: "rgba(99, 102, 241, 0.15)",
+                                    fill           : "+1",        // fills between this dataset and the next
+                                    pointRadius    : 0,
+                                    tension        : 0.4
+                                },
+                                // ── Main forecast line ───────────────────────────────────────────
+                                {
+                                    label          : "Forecasted Load (kWh)",
+                                    data           : data24.forecasts,
+                                    borderColor    : "#6366f1",
+                                    backgroundColor: "rgba(99, 102, 241, 0.08)",
+                                    borderWidth    : 2.5,
+                                    pointBackgroundColor: "#22d3ee",
+                                    pointBorderColor    : "#6366f1",
+                                    pointRadius         : 4,
+                                    pointHoverRadius    : 7,
+                                    fill           : false,
+                                    tension        : 0.4
+                                },
+                                // ── Lower confidence band ─────────────────────────────────────────
+                                {
+                                    label          : "Lower Band",
+                                    data           : data24.lower,
+                                    borderColor    : "transparent",
+                                    backgroundColor: "rgba(99, 102, 241, 0.15)",
+                                    fill           : false,
+                                    pointRadius    : 0,
+                                    tension        : 0.4
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive         : true,
+                            maintainAspectRatio: false,
+                            interaction: { mode: "index", intersect: false },
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color : "rgba(255,255,255,0.7)",
+                                        filter: (item) => item.text !== "Upper Band" && item.text !== "Lower Band"
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: (ctx) => {
+                                            if (ctx.dataset.label === "Upper Band" || ctx.dataset.label === "Lower Band") return null;
+                                            return " " + ctx.parsed.y.toFixed(1) + " kWh";
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    ticks: { color: "rgba(255,255,255,0.6)", font: { size: 11 } },
+                                    grid : { color: "rgba(255,255,255,0.07)" }
+                                },
+                                y: {
+                                    ticks: {
+                                        color   : "rgba(255,255,255,0.6)",
+                                        font    : { size: 11 },
+                                        callback: (v) => v.toFixed(0) + " kW"
+                                    },
+                                    grid: { color: "rgba(255,255,255,0.07)" }
+                                }
+                            }
+                        }
+                    });
+                }
+
+            } catch (err) {
+                debugBox.textContent = "ERROR:\n" + err;
+                alertBox.textContent = "❌ Request failed";
+                alertBox.className   = "py-4 rounded-xl bg-red-500 text-white mb-6 font-bold";
+            }
+        }
+    </script>
+
+
+</body>
+
+</html>

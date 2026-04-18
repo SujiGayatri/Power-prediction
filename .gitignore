@@ -1,0 +1,17 @@
+# Large datasets
+*.csv
+*.xlsx
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Optional folders
+data/
+datasets/
+
+# Logs
+*.log
+
+# SQLite cache
+.cache.sqlite
