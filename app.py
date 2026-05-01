@@ -1,6 +1,5 @@
 # from sys import last_value
 
-
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 import torch
 import torch.nn as nn
@@ -203,11 +202,14 @@ def predict():
             # Scale output back
             # forecast_kwh *= scale_back
 
-        alert = "🟢 NORMAL"
-        if forecast_kwh > current_load * 1.3:
+        avg_baseline = float(np.mean(base_loads))
+
+        if forecast_kwh >= avg_baseline * 1.20:       # 20% above daily average = HIGH
             alert = "🔴 HIGH LOAD"
-        elif forecast_kwh > current_load * 1.1:
+        elif forecast_kwh >= avg_baseline * 1.05:     # 5–20% above average = MEDIUM
             alert = "🟡 MEDIUM"
+        else:
+            alert = "🟢 NORMAL"
 
         return jsonify({
             'success': True,
